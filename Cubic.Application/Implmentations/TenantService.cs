@@ -3,6 +3,7 @@ using Cubic.Application.Dtos;
 using Cubic.Application.Interfaces;
 using Cubic.Core.Entities;
 using Cubic.Core.Interfaces;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,19 +14,31 @@ namespace Cubic.Application.Implmentations
 {
     public class TenantService : ITenantService
     {
+        private readonly IValidator<TenantDto> _validator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITenantRepository _tenantRepository;
         private readonly IMapper _mapper;
-        public TenantService(IUnitOfWork unitOfWork, ITenantRepository tenantRepository, IMapper mapper)
+        public TenantService(IUnitOfWork unitOfWork, ITenantRepository tenantRepository, IMapper mapper, IValidator<TenantDto> validator)
         {
             _unitOfWork = unitOfWork;
             _tenantRepository = tenantRepository;
             _mapper = mapper;
+            _validator = validator;
         }
 
         public async Task<Result<bool>> CreateTenant(TenantDto dto)
         {
-          var isExist = await _tenantRepository.SlugExistsAsync(dto.Slug);
+            var validationResult = await _validator.ValidateAsync(dto);
+
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return Result<bool>.Failed(string.Join(", ", errors), System.Net.HttpStatusCode.BadRequest);
+            }
+            var isExist = await _tenantRepository.SlugExistsAsync(dto.Slug);
 
             if (isExist)
                 return Result<bool>.Failed("Slug already exists.");

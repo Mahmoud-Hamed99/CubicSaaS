@@ -3,6 +3,7 @@ using Cubic.Application.Dtos;
 using Cubic.Application.Interfaces;
 using Cubic.Core.Entities;
 using Cubic.Core.Interfaces;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,22 +14,35 @@ namespace Cubic.Application.Implmentations
 {
     public class UserService : IUserService
     {
+        private readonly IValidator<UserDto> _validator;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ITenantContext _tenantContext;
 
-        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper, ITenantContext tenantContext)
+        public UserService(IUserRepository userRepository, IValidator<UserDto> validator, IUnitOfWork unitOfWork, IMapper mapper, ITenantContext tenantContext)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _tenantContext = tenantContext;
+            _validator = validator;
         }
 
         public async Task<Result<bool>> CreateUser(UserDto dto)
         {
-           var isEmailExist= _userRepository.EmailExistsAsync(dto.Email, _tenantContext.TenantId);
+            var validationResult = await _validator.ValidateAsync(dto);
+
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return Result<bool>.Failed(string.Join(", ", errors) , System.Net.HttpStatusCode.BadRequest);
+            }
+
+            var isEmailExist = _userRepository.EmailExistsAsync(dto.Email, _tenantContext.TenantId);
             if (isEmailExist) 
                 return Result<bool>.Failed("Email already exists");
 
@@ -62,7 +76,18 @@ namespace Cubic.Application.Implmentations
 
         public async Task<Result<bool>> UpdateUser(Guid id, UserDto dto)
         {
-           var user= await _userRepository.GetByIdAsync(id);
+            var validationResult = await _validator.ValidateAsync(dto);
+
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors
+                     .Select(e => e.ErrorMessage)
+                     .ToList();
+
+                return Result<bool>.Failed(string.Join(", ", errors), System.Net.HttpStatusCode.BadRequest);
+            }
+
+            var user= await _userRepository.GetByIdAsync(id);
             
             if (user == null || user.TenantId != _tenantContext.TenantId)
                 return Result<bool>.Failed("User not found.");
