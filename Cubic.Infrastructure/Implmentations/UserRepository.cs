@@ -23,6 +23,12 @@ namespace Cubic.Infrastructure.Implmentations
         {
             return  _context.Users.Any(u => u.Email.Trim().ToLower() == email.Trim().ToLower() && u.TenantId == tenantId);
         }
+
+        public int GetUsersCountByTenantId(Guid tenantId)
+        {
+           return _context.Users.Count(u => u.TenantId == tenantId && u.IsActive);
+        }
+
         public bool MarkUserAsDeleted(Guid userId, Guid tenantId)
         {
             var user=  _context.Users.FirstOrDefault(u => u.Id == userId && u.TenantId == tenantId);

@@ -9,7 +9,7 @@ namespace Cubic.Application.Implmentations
 {
     public class TenantContext : ITenantContext
     {
-       public Guid TenantId { get; set; }
+       public Guid? TenantId { get; set; }
     
     }
 }

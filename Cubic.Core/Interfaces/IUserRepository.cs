@@ -12,5 +12,7 @@ namespace Cubic.Core.Interfaces
         // add your custom methods for tenant repository here
         bool EmailExistsAsync(string email, Guid tenantId);
         bool MarkUserAsDeleted(Guid userId, Guid tenantId);
+        int GetUsersCountByTenantId(Guid tenantId);
+
     }
 }

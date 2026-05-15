@@ -42,13 +42,13 @@ namespace Cubic.Application.Implmentations
                 return Result<bool>.Failed(string.Join(", ", errors) , System.Net.HttpStatusCode.BadRequest);
             }
 
-            var isEmailExist = _userRepository.EmailExistsAsync(dto.Email, _tenantContext.TenantId);
+            var isEmailExist = _userRepository.EmailExistsAsync(dto.Email, _tenantContext.TenantId.GetValueOrDefault());
             if (isEmailExist) 
                 return Result<bool>.Failed("Email already exists");
 
             var entity = _mapper.Map<User>(dto);
             
-            entity.TenantId = _tenantContext.TenantId;
+            entity.TenantId = _tenantContext.TenantId.GetValueOrDefault();
 
             await _unitOfWork.GetRepository<User>().AddAsync(entity);
          
@@ -60,7 +60,7 @@ namespace Cubic.Application.Implmentations
 
         public async Task<Result<bool>> DeleteUser(Guid id)
         {
-          return _userRepository.MarkUserAsDeleted(id ,_tenantContext.TenantId) ?
+          return _userRepository.MarkUserAsDeleted(id ,_tenantContext.TenantId.GetValueOrDefault()) ?
                    Result<bool>.Success(true, "Deleted Successfully..!")
               : Result<bool>.Failed("Failed to delete user");
         }
@@ -104,5 +104,7 @@ namespace Cubic.Application.Implmentations
                 Result<bool>.Failed("Failed to update user");
 
         }
+
+       
     }
 }

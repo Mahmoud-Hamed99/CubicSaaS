@@ -48,9 +48,10 @@ namespace Cubic.Infrastructure.Context
 
             // Apply global filter
             modelBuilder.Entity<User>()
-          .HasQueryFilter(u => u.TenantId == _tenantContext.TenantId
-                            && u.IsActive); 
-
+              .HasQueryFilter(u =>
+                  (!_tenantContext.TenantId.HasValue || u.TenantId == _tenantContext.TenantId)
+                  && u.IsActive
+              );
 
             base.OnModelCreating(modelBuilder);
             

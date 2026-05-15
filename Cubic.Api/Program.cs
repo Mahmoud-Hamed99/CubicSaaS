@@ -3,6 +3,7 @@ using Cubic.Api.Middleware;
 using Cubic.Application.Dtos;
 using Cubic.Application.Implmentations;
 using Cubic.Application.Interfaces;
+using Cubic.Application.Jobs;
 using Cubic.Application.MappingProfile;
 using Cubic.Application.Validators;
 using Cubic.Core.Entities;
@@ -10,6 +11,7 @@ using Cubic.Core.Interfaces;
 using Cubic.Infrastructure.Context;
 using Cubic.Infrastructure.Implmentations;
 using FluentValidation;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -45,11 +47,29 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+builder.Services.AddScoped<UserJobs>();
+
+builder.Services.AddHangfire(config =>
+    config.UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("CubicDB")
+    ));
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
 
 app.UseMiddleware<TenantResolutionMiddleware>();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
+app.UseRouting();
+
+app.UseHangfireDashboard("/hangfire");
+
+
+RecurringJob.AddOrUpdate<UserJobs>(
+    "log-active-users-per-tenant",
+    job => job.LogActiveUsersPerTenantAsync(),
+    Cron.Minutely);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -13,5 +13,6 @@ namespace Cubic.Application.Interfaces
         Task<Result<bool>> CreateUser(UserDto dto);
         Task<Result<bool>> UpdateUser(Guid id, UserDto dto);
         Task<Result<bool>> DeleteUser(Guid id);
+      
     }
 }
