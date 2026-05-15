@@ -19,9 +19,23 @@ namespace Cubic.Infrastructure.Implmentations
             _context = dbContext;
         }
 
-        public async Task<bool> EmailExistsAsync(string email, Guid tenantId)
+        public bool EmailExistsAsync(string email, Guid tenantId)
         {
-            return await _context.Users.AnyAsync(u => u.Email.Trim().ToLower() == email.Trim().ToLower() && u.TenantId == tenantId);
+            return  _context.Users.Any(u => u.Email.Trim().ToLower() == email.Trim().ToLower() && u.TenantId == tenantId);
+        }
+        public bool MarkUserAsDeleted(Guid userId, Guid tenantId)
+        {
+            var user=  _context.Users.FirstOrDefault(u => u.Id == userId && u.TenantId == tenantId);
+            
+            if (user == null)
+                return false;
+
+            user.IsActive = false;
+            
+            _context.SaveChanges();
+            
+            return true;
+
         }
     }
 }

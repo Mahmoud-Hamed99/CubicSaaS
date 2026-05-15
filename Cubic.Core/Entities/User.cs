@@ -9,8 +9,7 @@ namespace Cubic.Core.Entities
 {
     public class User
     {
-        public int MyProperty { get; set; }
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
         
         [ForeignKey("Tenant")]
         public Guid TenantId { get; set; }
@@ -18,7 +17,7 @@ namespace Cubic.Core.Entities
         public string Email { get; set; }
         public string Role { get; set; }
         public bool IsActive { get; set; } = true;
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }=DateTime.Now;
 
         public Tenant Tenant { get; set; }
     }
