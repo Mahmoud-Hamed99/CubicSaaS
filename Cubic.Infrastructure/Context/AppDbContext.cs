@@ -1,6 +1,7 @@
 ﻿using Cubic.Core.Entities;
 using Cubic.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,23 +14,25 @@ namespace Cubic.Infrastructure.Context
     public class AppDbContext: DbContext
     {
         public readonly ITenantContext _tenantContext;
-        public AppDbContext(DbContextOptions<AppDbContext> options, ITenantContext tenantContext)
+        public IConfiguration _config;
+        public AppDbContext(DbContextOptions<AppDbContext> options, ITenantContext tenantContext, IConfiguration config)
         : base(options)
         {
             _tenantContext = tenantContext;
+            _config = config;
         }
 
         public virtual DbSet<Tenant> Tenant { get; set; }    
         public virtual DbSet<User> Users { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=.;Database=CubicSaas;Trusted_Connection=True;");
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {
+        //        optionsBuilder.UseSqlServer("Server=.;Database=CubicSaas;Trusted_Connection=True;");
 
-            }
-        }
+        //    }
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
