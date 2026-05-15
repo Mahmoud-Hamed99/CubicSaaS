@@ -11,7 +11,7 @@ namespace Cubic.Application.MappingProfile
 {
     public class MappingProfile : Profile
     {
-        protected MappingProfile()
+        public MappingProfile()
         {
             CreateMap<User, UserDto>().ReverseMap();
 

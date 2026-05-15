@@ -39,6 +39,10 @@ namespace Cubic.Infrastructure.Context
              .WithMany(s => s.Users)
              .HasForeignKey(e => e.TenantId);
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.TenantId)
+                .IsUnique(false);
+
             // Apply global filter
             modelBuilder.Entity<User>()
           .HasQueryFilter(u => u.TenantId == _tenantContext.TenantId

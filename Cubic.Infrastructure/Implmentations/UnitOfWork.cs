@@ -41,7 +41,14 @@ namespace Cubic.Infrastructure.Implmentations
             }
 
             var type = typeof(TEntity);
-           
+
+            if (!_repositories.ContainsKey(type))
+            {
+                // create new repository instance
+                var repository = new Repository<TEntity>(_context);
+
+                _repositories[type] = repository;
+            }
 
             return (IRepository<TEntity>)_repositories[type];
         }
