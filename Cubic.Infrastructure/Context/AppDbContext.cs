@@ -25,14 +25,7 @@ namespace Cubic.Infrastructure.Context
         public virtual DbSet<Tenant> Tenant { get; set; }    
         public virtual DbSet<User> Users { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    if (!optionsBuilder.IsConfigured)
-        //    {
-        //        optionsBuilder.UseSqlServer("Server=.;Database=CubicSaas;Trusted_Connection=True;");
-
-        //    }
-        //}
+     
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

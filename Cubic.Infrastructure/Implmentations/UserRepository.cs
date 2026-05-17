@@ -1,12 +1,6 @@
 ﻿using Cubic.Core.Entities;
 using Cubic.Core.Interfaces;
 using Cubic.Infrastructure.Context;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cubic.Infrastructure.Implmentations
 {
@@ -22,6 +16,11 @@ namespace Cubic.Infrastructure.Implmentations
         public bool EmailExistsAsync(string email, Guid tenantId)
         {
             return  _context.Users.Any(u => u.Email.Trim().ToLower() == email.Trim().ToLower() && u.TenantId == tenantId);
+        }
+
+        public async Task<User> GetUserById(Guid Id)
+        {
+            return  _context.Users.FirstOrDefault(a => a.Id == Id && a.IsActive);
         }
 
         public int GetUsersCountByTenantId(Guid tenantId)

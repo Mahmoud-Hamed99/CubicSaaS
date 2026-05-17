@@ -32,10 +32,10 @@ namespace Cubic.Api.Middleware
 
                 ((TenantContext)tenantContext).TenantId = tenantId;
                 await _next(context);
-                return;              // ✅ stop here — don't fall through to the next call
+                return;              
             }
 
-            await _next(context);    // ✅ only reached for non /api/user paths
+            await _next(context);    
         }
     }
     }

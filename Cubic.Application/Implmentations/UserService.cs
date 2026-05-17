@@ -4,11 +4,6 @@ using Cubic.Application.Interfaces;
 using Cubic.Core.Entities;
 using Cubic.Core.Interfaces;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cubic.Application.Implmentations
 {
@@ -94,7 +89,7 @@ namespace Cubic.Application.Implmentations
 
             user.FullName = dto.FullName;
             user.Email = dto.Email;
-            user.Role = dto.Role;
+            user.Role = dto.Role.ToLower();
             user.IsActive = dto.IsActive;   
 
             _unitOfWork.GetRepository<User>().Update(user);

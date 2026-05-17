@@ -14,6 +14,17 @@ namespace Cubic.Infrastructure.Implmentations
             _context = dbContext;
         }
 
+        public Task<Dictionary<Guid, int>> GetTenantActiveUsersCount()
+        {
+            return _context.Tenant.Include(t => t.Users)
+                .Select(t => new
+                {
+                    TenantId = t.Id,
+                    ActiveUsersCount = t.Users.Count(u => u.IsActive)
+                })
+                .ToDictionaryAsync(x => x.TenantId, x => x.ActiveUsersCount);
+        }
+
         public async Task<bool> SlugExistsAsync(string slug)
         {
            return await _context.Tenant.AnyAsync(t => t.Slug.Trim().ToLower() == slug.Trim().ToLower());

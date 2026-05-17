@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using Cubic.Application.Dtos;
+using System.Net.Sockets;
 
 namespace Cubic.Api.Middleware
 {
@@ -15,6 +16,21 @@ namespace Cubic.Api.Middleware
             try
             {
                 await _next(context);
+             
+                if (context.Response.StatusCode == 401 && !context.Response.HasStarted)
+                {
+                    context.Response.ContentType = "application/json";
+                   
+                     await context.Response.WriteAsJsonAsync(Result<bool>.Failed("Unauthorized — valid token is required",System.Net.HttpStatusCode.Unauthorized));
+
+                }
+                else if (context.Response.StatusCode == 403 && !context.Response.HasStarted)
+                {
+                    context.Response.ContentType = "application/json";
+                  
+                    await context.Response.WriteAsJsonAsync(Result<bool>.Failed("Forbidden — you don't have permission to access this resource", System.Net.HttpStatusCode.Forbidden));
+
+                }
             }
             catch (Exception ex)
             {

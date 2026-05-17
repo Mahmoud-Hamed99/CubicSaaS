@@ -1,11 +1,13 @@
 ﻿using Cubic.Application.Dtos;
 using Cubic.Application.Interfaces;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace Cubic.Api.Controllers
 {
+    [Authorize(Roles = "admin")]
     [ApiController]
     [Route("api/tenants")]
     public class TenantsController : ControllerBase

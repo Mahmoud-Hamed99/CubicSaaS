@@ -9,10 +9,10 @@ namespace Cubic.Core.Interfaces
 {
     public interface IUserRepository: IRepository<User>
     {
-        // add your custom methods for tenant repository here
         bool EmailExistsAsync(string email, Guid tenantId);
         bool MarkUserAsDeleted(Guid userId, Guid tenantId);
         int GetUsersCountByTenantId(Guid tenantId);
+       Task<User> GetUserById(Guid Id);
 
     }
 }

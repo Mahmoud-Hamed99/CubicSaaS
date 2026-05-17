@@ -9,7 +9,7 @@ namespace Cubic.Core.Interfaces
 {
     public interface ITenantRepository :IRepository<Tenant>
     {
-        // add your custom methods for tenant repository here
         Task<bool> SlugExistsAsync(string slug);
+        Task<Dictionary<Guid,int>> GetTenantActiveUsersCount();
     }
 }

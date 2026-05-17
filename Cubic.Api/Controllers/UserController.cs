@@ -1,9 +1,11 @@
 ﻿using Cubic.Application.Dtos;
 using Cubic.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cubic.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/user")]
     public class UserController : ControllerBase
@@ -22,13 +24,15 @@ namespace Cubic.Api.Controllers
             return Ok(users);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserDto dto)
         {
             var result = await _userService.CreateUser(dto);
             return Ok(result);
         }
-       
+
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserDto dto)
         {
@@ -36,6 +40,7 @@ namespace Cubic.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {

@@ -11,31 +11,31 @@ namespace Cubic.Application.Jobs
 {
     public class UserJobs
     {
-        private readonly IUserRepository _userRepo;
-        private readonly IUnitOfWork _uow;
+      
         private readonly ILogger<UserJobs> _logger;
-
-        public UserJobs(IUserRepository userRepo, IUnitOfWork unitOfWork, ILogger<UserJobs> logger)
+        private readonly ITenantRepository _tenantRepo;
+        public UserJobs(ILogger<UserJobs> logger, ITenantRepository tenantRepo)
         {
-            _userRepo = userRepo;
             _logger = logger;
-            _uow = unitOfWork;
+            _tenantRepo = tenantRepo;
         }
 
         public async Task LogActiveUsersPerTenantAsync()
         {
-            var tenants = await _uow.GetRepository<Tenant>().GetAllAsync();
+            var activeUsersCount = await _tenantRepo.GetTenantActiveUsersCount();
 
-            foreach (var tenant in tenants)
+            foreach (var kvp in activeUsersCount)
             {
-               int count=  _userRepo.GetUsersCountByTenantId(tenant.Id);
-
                 _logger.LogInformation(
                     "Tenant {TenantId} has {Count} active users",
-                    tenant.Id,
-                    count);
+                    kvp.Key,
+                    kvp.Value);
             }
         }
 
     }
 }
+
+
+
+         

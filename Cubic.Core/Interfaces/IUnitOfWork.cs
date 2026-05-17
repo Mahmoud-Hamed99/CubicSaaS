@@ -6,7 +6,6 @@ namespace Cubic.Core.Interfaces
     {
         Task<int> SaveChangesAsync();
 
-      //  IRepository<TEntity> GetRepository<TEntity>() where TEntity : class;
         IRepository<TEntity> GetRepository<TEntity>(bool hasCustomRepository = false) where TEntity : class;
 
     }
