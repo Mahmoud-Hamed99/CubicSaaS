@@ -89,7 +89,7 @@ namespace Cubic.Application.Implmentations
 
             user.FullName = dto.FullName;
             user.Email = dto.Email;
-            user.Role = dto.Role.ToLower();
+            user.Role = dto.Role;
             user.IsActive = dto.IsActive;   
 
             _unitOfWork.GetRepository<User>().Update(user);
